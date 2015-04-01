@@ -1,21 +1,22 @@
 bin_PROGRAMS = dev
 
 dev_VALAFLAGS = \
-	-H $(srcdir)/libdev.h -C -c --pkg libzmq
+	--target-glib=2.38 -H $(srcdir)/libdev.h -C -c \
+	--pkg gio-2.0 --pkg libzmq --pkg comedi
 
 dev_CFLAGS = \
-	--include config.h \
-	$(ASYNC_BUS_CFLAGS)
+	--include config.h -lm \
+	$(DCS_CFLAGS)
 
 dev_LDADD = \
-	$(ASYNC_BUS_LIBS)
+	$(DCS_LIBS)
 
 dev_headers = \
-	dev.h \
 	libdev.h
 
 dev_SOURCES = \
-	main.vala
+	main.vala \
+	util.vala
 
 CLEANFILES = \
 	*.stamp \

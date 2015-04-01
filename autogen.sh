@@ -15,6 +15,7 @@ PKG_NAME="async-bus"
 }
 
 aclocal && \
+autoheader && \
 automake --gnu --add-missing && \
 autoconf && {
   echo "Running configure with $@"

@@ -1,6 +1,12 @@
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
-SUBDIRS = dev mux
+SUBDIRS = dev \
+		  mux \
+		  top
+
+if BUILD_HMI
+SUBDIRS += hmi
+endif
 
 MAINTAINERCLEANFILES = Makefile.in
 

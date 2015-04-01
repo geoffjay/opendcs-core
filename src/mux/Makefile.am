@@ -5,13 +5,12 @@ mux_VALAFLAGS = \
 
 mux_CFLAGS = \
 	--include config.h \
-	$(ASYNC_BUS_CFLAGS)
+	$(DCS_CFLAGS)
 
 mux_LDADD = \
-	$(ASYNC_BUS_LIBS)
+	$(DCS_LIBS)
 
 mux_headers = \
-	mux.h \
 	libmux.h
 
 mux_SOURCES = \

@@ -1,4 +1,4 @@
-class AsyncBus.Multiplexer : GLib.Object {
+class DCS.Multiplexer : GLib.Object {
 
     public static int main (string[] args) {
 
