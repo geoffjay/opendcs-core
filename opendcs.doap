@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <name xml:lang="en">OpenDCS</name>
+  <shortdesc xml:lang="en">
+    A distributed platform for measurement and control
+  </shortdesc>
+  <description xml:lang="en">
+    OpenDCS is a platform for creating distributed control and monitoring systems.
+    It is currently under heavy development.
+  </description>
+  <homepage rdf:resource=http://geoffjay.github.io/opendcs"" />
+  <download-page rdf:resource="https://github.com/geoffjay/opendcs/releases" />
+  <bug-database rdf:resource="https://github.com/geoffjay/opendcs/issues" />
+
+  <programming-language>C</programming-language>
+  <programming-language>Vala</programming-language>
+  <programming-language>Ruby</programming-language>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Geoff Johnson</foaf:name>
+      <foaf:mbox rdf:resource="mailto:geoff.jay@gmail.com" />
+    </foaf:Person>
+  </maintainer>
+
+</Project>

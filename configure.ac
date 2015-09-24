@@ -1,13 +1,13 @@
 dnl This file is processed by autoconf to create a configure script
 AC_INIT([opendcs],
-        [m4_esyscmd(build-aux/git-version-gen .tarball-version)],
+        [m4_esyscmd(build/git-version-gen .tarball-version)],
         [https://github.com/geoffjay/opendcs],
         [opendcs])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([src/libdcs-core/object.vala])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_AUX_DIR([build])
 
 AC_PROG_CC
 AM_PROG_CC_STDC
