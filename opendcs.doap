@@ -18,7 +18,8 @@
 
   <programming-language>C</programming-language>
   <programming-language>Vala</programming-language>
-  <programming-language>Ruby</programming-language>
+  <programming-language>Python</programming-language>
+  <programming-language>Javascript</programming-language>
 
   <maintainer>
     <foaf:Person>

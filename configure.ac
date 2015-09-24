@@ -1,29 +1,111 @@
-dnl This file is processed by autoconf to create a configure script
-AC_INIT([opendcs],
-        [m4_esyscmd(build/git-version-gen .tarball-version)],
-        [https://github.com/geoffjay/opendcs],
-        [opendcs])
+dnl ****************************************************************************
+dnl Define versioning information
+dnl ****************************************************************************
+m4_define([opendcs_major_version],[0])
+m4_define([opendcs_minor_version],[1])
+m4_define([opendcs_micro_version],[0])
+m4_define([opendcs_version],[opendcs_major_version.opendcs_minor_version.opendcs_micro_version])
+m4_define([opendcs_interface_age],[0])
+m4_define([opendcs_bugreport_url],
+          [https://github.com/geoffjay/opendcs/issues])
+m4_define([opendcs_debug_default],
+          [m4_if(m4_eval(opendcs_minor_version % 2), [1], [yes], [minimum])])
 
+dnl ****************************************************************************
+dnl Initialize autoconf
+dnl ****************************************************************************
+AC_INIT([opendcs],[opendcs_version],[opendcs_bugreport_url])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([src/libdcs-core/object.vala])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([build/autotools])
 AC_CONFIG_AUX_DIR([build])
+AC_SUBST(ACLOCAL_AMFLAGS, "-I build/autotools")
+AC_CANONICAL_HOST
 
-AC_PROG_CC
-AM_PROG_CC_STDC
-AM_PROG_VALAC([0.22.0])
-AC_PROG_LN_S
+dnl ****************************************************************************
+dnl Make version info available to .in files
+dnl ****************************************************************************
+MAJOR_VERSION=opendcs_major_version
+MINOR_VERSION=opendcs_minor_version
+MICRO_VERSION=opendcs_micro_version
+LIBDCS_VERSION=opendcs_version
+AC_SUBST(MAJOR_VERSION)
+AC_SUBST(MINOR_VERSION)
+AC_SUBST(MICRO_VERSION)
+AC_SUBST(LIBDCS_VERSION)
 
-m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
-
-AC_CANONICAL_TARGET
-
-AM_INIT_AUTOMAKE([1.10 no-define foreign dist-xz no-dist-gzip])
+dnl ***********************************************************************
+dnl Initialize automake
+dnl ***********************************************************************
+AM_SILENT_RULES([yes])
+AM_INIT_AUTOMAKE([1.11 foreign subdir-objects tar-ustar no-dist-gzip dist-xz])
 AM_MAINTAINER_MODE([enable])
 
+dnl ***********************************************************************
+dnl Internationalization
+dnl ***********************************************************************
+IT_PROG_INTLTOOL([0.50.1])
+GETTEXT_PACKAGE=AC_PACKAGE_TARNAME
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], [GETTEXT package name])
+AM_GLIB_GNU_GETTEXT
+
+dnl ***********************************************************************
+dnl Check for required programs
+dnl ***********************************************************************
+AC_PROG_CC
+AM_PROG_CC_C_O
+AC_PROG_INSTALL
+AC_PROG_CXX
+AM_PROG_VALAC([0.22.0])
+AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
+AC_PATH_PROG([GLIB_MKENUMS], [glib-mkenums])
+AC_PATH_PROG([GLIB_COMPILE_RESOURCES], [glib-compile-resources])
+AC_HEADER_STDC
 PKG_PROG_PKG_CONFIG([0.22])
 
-dnl No rhyme or reason here, just the versions that I'm working with
+dnl ***********************************************************************
+dnl Setup debug and tracing support
+dnl ***********************************************************************
+AC_ARG_ENABLE(tracing,
+              AS_HELP_STRING([--enable-tracing=@<:@no/yes@:>@],
+                             [add extra debugging information @<:@default=no@:>@]),
+              ,
+              enable_tracing=no)
+AS_IF([test "x$enable_tracing" = "xyes"],[enable_debug=yes ENABLE_TRACING=1],[ENABLE_TRACING=0])
+AC_SUBST(ENABLE_TRACING)
+
+AC_ARG_ENABLE(debug,
+              AS_HELP_STRING([--enable-debug=@<:@no/minimum/yes@:>@],
+                             [turn on debugging @<:@default=opendcs_debug_default@:>@]),
+              ,
+              enable_debug=opendcs_debug_default)
+AS_CASE(["$enable_debug"],
+        [yes],[
+            DEBUG_CFLAGS="$DEBUG_CFLAGS -O0"
+            DEBUG_CFLAGS="$DEBUG_CFLAGS -g"
+        ],
+        [minimum],[
+            DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_CAST_CHECKS"
+        ],
+        [no],[
+            DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_ASSERT"
+            DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_CHECKS"
+            DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_CAST_CHECKS"
+        ],
+        [])
+AC_SUBST(DEBUG_CFLAGS)
+
+BUGREPORT_URL=opendcs_bugreport_url
+AC_SUBST(BUGREPORT_URL)
+
+dnl XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+dnl Uncertainty starts here ---
+dnl ---
+
+dnl ***********************************************************************
+dnl Check for required packages
+dnl ***********************************************************************
 COMEDI_MIN_VERSION=0.8.1
 CURSES_MIN_VERSION=5.9.0
 GEE_MIN_VERSION=0.8.0
@@ -84,14 +166,117 @@ AS_IF([test "x$try_hmi" = "xyes"], [
 
 AM_CONDITIONAL(BUILD_HMI, test "x$HAVE_GTK" = "xyes")
 
-dnl Use valadoc and gtk-doc for API documentation:
-dnl This is on by default when using autogen.sh
-dnl (so it is not on by default when building from a tarball with configure.)
+dnl ---
+dnl Uncertainty stops here ---
+dnl XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+dnl ***********************************************************************
+dnl Check for supported plugins
+dnl ***********************************************************************
+
+dnl ***********************************************************************
+dnl Check for supported devices (also plugins)
+dnl ***********************************************************************
+
+dnl ***********************************************************************
+dnl Check for required python
+dnl ***********************************************************************
+enable_python_scripting=no
+AS_IF([test "x$have_pygobject" = "xyes"],[
+    AC_PATH_TOOL(PYTHON3_CONFIG, "python3-config")
+    AS_IF([test -z "${PYTHON3_CONFIG}"],[
+        AC_MSG_RESULT([Failed to locate python3-config.])
+    ],[
+        LIBDCS_CFLAGS="${LIBDCS_CFLAGS} `${PYTHON3_CONFIG} --includes`"
+        LIBDCS_LIBS="${LIBDCS_LIBS} `${PYTHON3_CONFIG} --libs`"
+        LIBDCS_LDFLAGS="${LIBDCS_LDFLAGS} `${PYTHON3_CONFIG} --ldflags`"
+        enable_python_scripting=yes
+    ])
+])
+
+dnl ***********************************************************************
+dnl Define automake conditionals based on what we found
+dnl ***********************************************************************
+AM_CONDITIONAL(ENABLE_PYTHON_SCRIPTING, test x$enable_python_scripting != xno)
+AM_CONDITIONAL(ENABLE_GJS_SCRIPTING, test x$enable_gjs_scripting != xno)
+
+dnl ***********************************************************************
+dnl Initialize Libtool
+dnl ***********************************************************************
+LT_PREREQ([2.2])
+LT_INIT
+
+dnl ***********************************************************************
+dnl Additional C compiler flags
+dnl ***********************************************************************
+AX_CHECK_COMPILE_FLAG([-Werror=unknown-warning-option], [
+    ax_compiler_flags_test="-Werror=unknown-warning-option"
+], [
+    ax_compiler_flags_test=""
+])
+AX_APPEND_COMPILE_FLAGS([ \
+    -Wall \
+    -Wcast-align \
+    -Wdeclaration-after-statement \
+    -Wempty-body \
+    -Werror=format-security \
+    -Werror=format=2 \
+    -Wextra \
+    -Wformat \
+    -Wformat-nonliteral \
+    -Wformat-security \
+    -Winit-self \
+    -Wmisleading-indentation \
+    -Wmissing-include-dirs \
+    -Wshift-negative-value \
+    -Wnested-externs \
+    -Wno-missing-field-initializers \
+    -Wno-sign-compare \
+    -Wno-strict-aliasing \
+    -Wno-uninitialized \
+    -Wno-unused-parameter \
+    -Wpointer-arith \
+    -Wredundant-decls \
+    -Wreturn-type \
+    -Wshadow \
+    -Wswitch-default \
+    -Wswitch-enum \
+    -Wundef \
+    -Wuninitialized \
+], [], [$ax_compiler_flags_test])
+AC_C_CONST
+
+dnl ***********************************************************************
+dnl Desktop settings support
+dnl ***********************************************************************
+GLIB_GSETTINGS
+
+dnl ***********************************************************************
+dnl Setup introspection
+dnl ***********************************************************************
+GOBJECT_INTROSPECTION_CHECK([1.42.0])
+
+dnl ***********************************************************************
+dnl Always build tests
+dnl ***********************************************************************
+AC_ARG_ENABLE([tests],
+              AS_HELP_STRING([--enable-tests],
+                             [Enable always building tests during 'make all' [default=no]]),
+              [enable_tests=$enableval], [enable_tests=no])
+
+AM_CONDITIONAL([ENABLE_TESTS], test "$enable_tests" = "yes")
+
+dnl ***********************************************************************
+dnl Use valadoc and gtk-doc for API documentation
+dnl ***********************************************************************
 AC_ARG_ENABLE(apidocs,
               AS_HELP_STRING([--enable-apidocs[=@<:@no/auto/yes@:>@]],
                              [Create API documentation using valadoc and GTK-Doc]),,
               [enable_apidocs=auto])
 
+dnl ***********************************************************************
+dnl Check for Dependencies needed to generate API Documentation
+dnl ***********************************************************************
 HAVE_VALADOC=no
 AS_IF([test "x$enable_apidocs" != "xno"], [
     AC_PATH_PROG(VALADOC, valadoc, :)
@@ -109,14 +294,46 @@ AS_IF([test "x$enable_apidocs" != "xno"], [
 
 AM_CONDITIONAL(ENABLE_VALADOC, test "x$HAVE_VALADOC" = "xyes")
 
+dnl ***********************************************************************
+dnl Rules for generating AppStream information
+dnl ***********************************************************************
+APPSTREAM_XML
+
+dnl ***********************************************************************
+dnl Check if we should instrument our targets
+dnl ***********************************************************************
+AC_MSG_CHECKING([for --enable-profiling])
+AC_ARG_ENABLE(profiling,
+              AC_HELP_STRING([--enable-profiling],
+                             [turn on runtime instrumentation [default=no]]),
+              [enable_profiling=$enableval],
+          [enable_profiling=no])
+AS_IF([test "$enable_profiling" = "yes"],[
+    ac_save_cflags="$CFLAGS"
+    CFLAGS="$CFLAGS -pg"
+    AC_LINK_IFELSE([AC_LANG_SOURCE([[int main() { return 0; }]])],
+                   [PROFILING_CFLAGS="-pg"],
+               [enable_profiling=no])
+    CFLAGS="$ac_save_cflags $PROFILING_CFLAGS"
+])
+AC_MSG_RESULT([$enable_profiling])
+
+dnl ***********************************************************************
+dnl Process .in files
+dnl ***********************************************************************
 AC_CONFIG_FILES([
     Makefile
-    docs/Makefile
-    docs/api/Makefile
-    docs/man/Makefile
-    docs/man/dcs-cli/Makefile
-    docs/man/dcs-monitor/Makefile
-    docs/rtd/Makefile
+
+    build/Makefile
+    build/autotools/Makefile
+
+    doc/Makefile
+    doc/api/Makefile
+    doc/man/Makefile
+    doc/man/dcs-cli/Makefile
+    doc/man/dcs-monitor/Makefile
+    doc/rtd/Makefile
+
     src/dcs-cfgd/Makefile
     src/dcs-cli/Makefile
     src/dcs-ctrld/Makefile
@@ -130,27 +347,47 @@ AC_CONFIG_FILES([
     src/libdcs-devices/stream/Makefile
     src/libdcs-hmi/Makefile
     src/libdcs-log/Makefile
-    test/Makefile
+
+    tests/Makefile
 ])
 
 AC_OUTPUT
 
 AC_MSG_NOTICE([
 
-    OpenDCS $VERSION
-    ================================
+    $PACKAGE - $VERSION
 
-    Prefix:             ${prefix}
-    Source location:    ${srcdir}
-    Compiler:           ${CC}
-    CFLAGS:             ${CFLAGS}
-    VALAFLAGS:          ${VALAFLAGS}
+    > Options
+
+      Prefix ................................ : ${prefix}
+      Libdir ................................ : ${srcdir}
+
+    > Development Options
+
+      Enable Debug .......................... : ${enable_debug}
+      Enable Tracing ........................ : ${enable_tracing}
+      Enable Profiling (-pg) ................ : ${enable_profiling}
+      Build Test Suite ...................... : ${enable_tests}
+      Build API reference ................... : ${enable_apidocs}
+
+    > Scripting
+
+      Python ................................ : ${enable_python_scripting}
+      GJS ................................... : ${enable_gjs_scripting}
+
+    > Plugins
+
+      None yet
+
+    > Devices
+
+      None yet
 
     > Component Selection
 
-    CLI:                ${HAVE_CURSES}
-    HMI:                ${HAVE_GTK}
-    API Documentation:  ${HAVE_VALADOC}
+      CLI ................................... : ${HAVE_CURSES}
+      HMI ................................... : ${HAVE_GTK}
+      API Documentation ..................... : ${HAVE_VALADOC}
 
     > Configure Complete
 
