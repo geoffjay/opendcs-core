@@ -1,4 +1,4 @@
-include Makefile.decl
+include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = dcs-cfgd \
 		  dcs-cli \

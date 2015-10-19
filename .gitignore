@@ -11,12 +11,31 @@ configure
 Makefile
 Makefile.in
 stamp-h1
+intltool-extract.in
+intltool-merge.in
+intltool-update.in
+libtool
+ChangeLog
+INSTALL
 
 autom4te.cache
 
-build-aux/compile
-build-aux/config.guess
-build-aux/config.sub
-build-aux/depcomp
-build-aux/install-sh
-build-aux/missing
+build/compile
+build/config.guess
+build/config.sub
+build/depcomp
+build/install-sh
+build/missing
+build/ltmain.sh
+build/autotools/glib-gettext.m4
+build/autotools/gsettings.m4
+build/autotools/intltool.m4
+build/autotools/libtool.m4
+build/autotools/ltoptions.m4
+build/autotools/ltsugar.m4
+build/autotools/ltversion.m4
+build/autotools/lt~obsolete.m4
+build/autotools/nls.m4
+
+po/POTFILES
+po/stamp-it

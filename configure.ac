@@ -1,3 +1,5 @@
+AC_PREREQ([2.69])
+
 dnl ****************************************************************************
 dnl Define versioning information
 dnl ****************************************************************************
@@ -319,6 +321,17 @@ AS_IF([test "$enable_profiling" = "yes"],[
 AC_MSG_RESULT([$enable_profiling])
 
 dnl ***********************************************************************
+dnl Support systemd
+dnl ***********************************************************************
+m4_include([build/autotools/features.m4])
+m4_include([build/autotools/systemd.m4])
+m4_include([build/autotools/paths.m4])
+
+AX_LOCAL_EXPAND_CONFIG()
+AX_AVAILABLE_SYSTEMD()
+AM_CONDITIONAL(CONFIG_SYSTEMD, [test x"$systemd" = xy])
+
+dnl ***********************************************************************
 dnl Process .in files
 dnl ***********************************************************************
 AC_CONFIG_FILES([
@@ -334,6 +347,7 @@ AC_CONFIG_FILES([
     doc/man/dcs-monitor/Makefile
     doc/rtd/Makefile
 
+    src/Makefile
     src/dcs-cfgd/Makefile
     src/dcs-cli/Makefile
     src/dcs-ctrld/Makefile
@@ -347,6 +361,8 @@ AC_CONFIG_FILES([
     src/libdcs-devices/stream/Makefile
     src/libdcs-hmi/Makefile
     src/libdcs-log/Makefile
+
+    po/Makefile.in
 
     tests/Makefile
 ])

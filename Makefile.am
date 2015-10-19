@@ -2,7 +2,7 @@ include Makefile.decl
 
 SUBDIRS = \
 	src \
-	test \
+	tests \
 	$(NULL)
 
 pkgconfigdir = $(libdir)/pkgconfig
