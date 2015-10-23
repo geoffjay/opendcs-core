@@ -1,17 +1,17 @@
-# OpenDCS - Create distributed control systems
+# OpenDCS Core - Core components to create distributed control systems
 
 * Until the OpenDCS account on GitHub becomes free...
 
- - Bugs: https://github.com/geoffjay/opendcs/issues
- - Download: https://github.com/geoffjay/opendcs/releases
- - Git: https://github.com/geoffjay/opendcs
+ - Bugs: https://github.com/geoffjay/opendcs-core/issues
+ - Download: https://github.com/geoffjay/opendcs-core/releases
+ - Git: https://github.com/geoffjay/opendcs-core
  - Website: http://geoffjay.github.io/opendcs
  - IRC: <TBD>
 
 ---
 
-OpenDCS can be built from tarball releases using the traditional autotools
-manner.
+This portion of OpenDCS can be built from tarball releases using the traditional
+autotools manner.
 
 If you checked the code out from git, you will need to bootstrap the build
 system like so:
