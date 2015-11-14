@@ -1,5 +1,0 @@
-*.c
-*.h
-hmi
-.deps/
-hmi_vala.stamp

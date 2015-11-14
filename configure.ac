@@ -18,7 +18,7 @@ dnl Initialize autoconf
 dnl ****************************************************************************
 AC_INIT([opendcs],[opendcs_version],[opendcs_bugreport_url])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_SRCDIR([src/libdcs-core/object.vala])
+AC_CONFIG_SRCDIR([dcs/object.vala])
 AC_CONFIG_MACRO_DIR([build/autotools])
 AC_CONFIG_AUX_DIR([build])
 AC_SUBST(ACLOCAL_AMFLAGS, "-I build/autotools")
@@ -108,65 +108,19 @@ dnl ---
 dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
-COMEDI_MIN_VERSION=0.8.1
-CURSES_MIN_VERSION=5.9.0
-GEE_MIN_VERSION=0.8.0
 GIO_MIN_VERSION=2.39.3
-GTK_MIN_VERSION=3.0
-ZMQ_MIN_VERSION=3.2.0
 
 dnl This should be changed to create DCS_CORE_DEPS_{CFLAGS,LIBS}
 PKG_CHECK_MODULES(DCS, [
-        comedi      >= $COMEDI_MIN_VERSION
-        gee-0.8     >= $GEE_MIN_VERSION
         gio-2.0     >= $GIO_MIN_VERSION
-        libzmq      >= $ZMQ_MIN_VERSION
     ],[
-        DCS_CORE_DEPS_VALAFLAGS="gee-0.8 gio-2.0 libzmq"
+        DCS_CORE_DEPS_VALAFLAGS="gio-2.0"
         DCS_ADD_VALAFLAGS([DCS_CORE_DEPS_VALAFLAGS])
         AC_SUBST([DCS_CORE_DEPS_VALAFLAGS])
     ],[
         AC_MSG_WARN([Core dependencies are missing.])
-        AC_MSG_WARN([Try installing using: dnf install {comedi,libgee,zeromq3}-devel])
+        AC_MSG_WARN([Try installing using: dnf install glib2-devel])
     ])
-
-dnl Check if the user wants to build the CLI component
-AC_ARG_WITH(cli,
-  AS_HELP_STRING([--without-cli], [Do not build CLI applications]),
-                 [try_cli=$withval], [try_cli=yes])
-
-HAVE_CURSES=no
-AS_IF([test "x$try_cli" = "xyes"], [
-    PKG_CHECK_MODULES([DCS_CLI_DEPS], [ncurses >= $CURSES_MIN_VERSION], [
-        DCS_CHECK_PACKAGES([ncurses], [HAVE_CURSES=yes])
-        DCS_CLI_DEPS_VALAFLAGS="--pkg ncurses"
-        AC_SUBST([DCS_CLI_DEPS_VALAFLAGS])
-    ], [
-        AC_MSG_WARN([CLI dependencies not found.])
-        AC_MSG_WARN([CLI applications will not be built.])
-    ])
-])
-
-AM_CONDITIONAL(BUILD_CLI, test "x$HAVE_CURSES" = "xyes")
-
-dnl Check if the user wants to build the HMI component
-AC_ARG_WITH(hmi,
-  AS_HELP_STRING([--without-hmi], [Do not build HMI applications]),
-                 [try_hmi=$withval], [try_hmi=yes])
-
-HAVE_GTK=no
-AS_IF([test "x$try_hmi" = "xyes"], [
-    PKG_CHECK_MODULES([DCS_HMI_DEPS], [gtk+-3.0 >= $GTK_MIN_VERSION], [
-        DCS_CHECK_PACKAGES([gtk+-3.0], [HAVE_GTK=yes])
-        DCS_HMI_DEPS_VALAFLAGS="--pkg gtk+-3.0"
-        AC_SUBST([DCS_HMI_DEPS_VALAFLAGS])
-    ], [
-        AC_MSG_WARN([HMI dependencies not found.])
-        AC_MSG_WARN([HMI applications will not be built.])
-    ])
-])
-
-AM_CONDITIONAL(BUILD_HMI, test "x$HAVE_GTK" = "xyes")
 
 dnl ---
 dnl Uncertainty stops here ---
@@ -297,11 +251,6 @@ AS_IF([test "x$enable_apidocs" != "xno"], [
 AM_CONDITIONAL(ENABLE_VALADOC, test "x$HAVE_VALADOC" = "xyes")
 
 dnl ***********************************************************************
-dnl Rules for generating AppStream information
-dnl ***********************************************************************
-APPSTREAM_XML
-
-dnl ***********************************************************************
 dnl Check if we should instrument our targets
 dnl ***********************************************************************
 AC_MSG_CHECKING([for --enable-profiling])
@@ -321,17 +270,6 @@ AS_IF([test "$enable_profiling" = "yes"],[
 AC_MSG_RESULT([$enable_profiling])
 
 dnl ***********************************************************************
-dnl Support systemd
-dnl ***********************************************************************
-m4_include([build/autotools/features.m4])
-m4_include([build/autotools/systemd.m4])
-m4_include([build/autotools/paths.m4])
-
-AX_LOCAL_EXPAND_CONFIG()
-AX_AVAILABLE_SYSTEMD()
-AM_CONDITIONAL(CONFIG_SYSTEMD, [test x"$systemd" = xy])
-
-dnl ***********************************************************************
 dnl Process .in files
 dnl ***********************************************************************
 AC_CONFIG_FILES([
@@ -340,27 +278,14 @@ AC_CONFIG_FILES([
     build/Makefile
     build/autotools/Makefile
 
+    data/Makefile
+    data/dcs-$MAJOR_VERSION.$MINOR_VERSION.pc
+
     doc/Makefile
     doc/api/Makefile
-    doc/man/Makefile
-    doc/man/dcs-cli/Makefile
-    doc/man/dcs-monitor/Makefile
     doc/rtd/Makefile
 
-    src/Makefile
-    src/dcs-cfgd/Makefile
-    src/dcs-cli/Makefile
-    src/dcs-ctrld/Makefile
-    src/dcs-hmi/Makefile
-    src/dcs-logd/Makefile
-    src/dcs-monitor/Makefile
-    src/libdcs-core/Makefile
-    src/libdcs-devices/Makefile
-    src/libdcs-devices/mux/Makefile
-    src/libdcs-devices/poll/Makefile
-    src/libdcs-devices/stream/Makefile
-    src/libdcs-hmi/Makefile
-    src/libdcs-log/Makefile
+    dcs/Makefile
 
     po/Makefile.in
 
@@ -401,8 +326,6 @@ AC_MSG_NOTICE([
 
     > Component Selection
 
-      CLI ................................... : ${HAVE_CURSES}
-      HMI ................................... : ${HAVE_GTK}
       API Documentation ..................... : ${HAVE_VALADOC}
 
     > Configure Complete

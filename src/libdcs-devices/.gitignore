@@ -1,5 +1,0 @@
-*.c
-*.h
-dev
-.deps/
-dev_vala.stamp

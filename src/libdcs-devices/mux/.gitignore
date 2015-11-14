@@ -1,5 +1,0 @@
-*.c
-*.h
-mux
-.deps/
-mux_vala.stamp

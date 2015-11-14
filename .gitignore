@@ -37,5 +37,9 @@ build/autotools/ltversion.m4
 build/autotools/lt~obsolete.m4
 build/autotools/nls.m4
 
+dcs/*.c
+dcs/*.la
+dcs/*.lo
+
 po/POTFILES
 po/stamp-it
