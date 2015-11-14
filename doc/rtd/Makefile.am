@@ -1,2 +1,2 @@
-include $(top_srcdir)/Makefile.decl
+include $(top_srcdir)/build/autotools/automake/defaults.mk
 include Makefile.sphinx

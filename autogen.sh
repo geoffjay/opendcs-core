@@ -6,7 +6,7 @@ test -z "$srcdir" && srcdir=.
 
 PKG_NAME="OpenDCS"
 
-(test -f $srcdir/src/libdcs-core/object.vala) || {
+(test -f $srcdir/dcs/object.vala) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level $PKG_NAME directory"
     exit 1
