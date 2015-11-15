@@ -26,6 +26,22 @@ Then, a typical build might look like so:
 
 ---
 
+Examples
+--------
+
+libdcs supports GObject-Introspection which means you can consume it in various
+popular languages including but not limited to: Python, Perl, Lua, JS, PHP.
+
+Feel free to add examples for your favorite language.
+
+Note: If you installed the library in /usr/local, you have to export the following
+environment variables for the examples to work:
+
+```
+$ export LD_LIBRARY_PATH=/usr/local/lib
+$ export GI_TYPELIB_PATH=/usr/local/lib/girepository-1.0/
+```
+
 OpenDCS and all it's components are licensed under the GNU Lesser General Public
 License as published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version.

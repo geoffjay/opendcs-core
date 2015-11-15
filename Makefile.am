@@ -1,12 +1,9 @@
+include build/autotools/automake/common.mk
 include build/autotools/automake/defaults.mk
 
 SUBDIRS = \
-	data \
 	dcs \
 	tests
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = $(top_builddir)/data/dcs-1.0.pc
 
 INTLTOOL_FILES = \
 	intltool-extract.in \
@@ -29,6 +26,7 @@ DISTCHECK_CONFIGURE_FLAGS = \
 
 GITIGNOREFILES = \
 	**/*.swp \
+	**/*.c \
 	*.o \
 	aclocal.m4 \
 	build-aux \

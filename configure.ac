@@ -36,6 +36,13 @@ AC_SUBST(MINOR_VERSION)
 AC_SUBST(MICRO_VERSION)
 AC_SUBST(LIBDCS_VERSION)
 
+# This is used to identify a set of API compatible beatween versions
+# - If new versions are compatible with the actual one, just leave this untouched
+# - If new version breaks API change it in order to allow paralled installations
+#   with old versions. Change name of pc files to use a new API too.
+API_VERSION=opendcs_major_version.opendcs_minor_version
+AC_SUBST([API_VERSION])
+
 dnl ***********************************************************************
 dnl Initialize automake
 dnl ***********************************************************************
@@ -108,18 +115,22 @@ dnl ---
 dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
-GIO_MIN_VERSION=2.39.3
+GIO_MIN_VERSION=2.44.1
+GLIB_MIN_VERSION=2.44.1
+JSON_GLIB_MIN_VERSION=1.0.4
 
-dnl This should be changed to create DCS_CORE_DEPS_{CFLAGS,LIBS}
+dnl This should be changed to create DCS_DEPS_{CFLAGS,LIBS}
 PKG_CHECK_MODULES(DCS, [
-        gio-2.0     >= $GIO_MIN_VERSION
+        gio-2.0         >= $GIO_MIN_VERSION
+        glib-2.0        >= $GLIB_MIN_VERSION
+        json-glib-1.0   >= $JSON_GLIB_MIN_VERSION
     ],[
-        DCS_CORE_DEPS_VALAFLAGS="gio-2.0"
-        DCS_ADD_VALAFLAGS([DCS_CORE_DEPS_VALAFLAGS])
-        AC_SUBST([DCS_CORE_DEPS_VALAFLAGS])
+        DCS_DEPS_VALAFLAGS="--pkg json-glib-1.0 --pkg gio-2.0 --pkg gmodule-2.0"
+        DCS_ADD_VALAFLAGS([DCS_DEPS_VALAFLAGS])
+        AC_SUBST([DCS_DEPS_VALAFLAGS])
     ],[
         AC_MSG_WARN([Core dependencies are missing.])
-        AC_MSG_WARN([Try installing using: dnf install glib2-devel])
+        AC_MSG_WARN([Try installing using: dnf install {glib2,json-glib-1.0}-devel])
     ])
 
 dnl ---
@@ -277,15 +288,14 @@ AC_CONFIG_FILES([
 
     build/Makefile
     build/autotools/Makefile
-
-    data/Makefile
-    data/dcs-$MAJOR_VERSION.$MINOR_VERSION.pc
+    build/autotools/automake/Makefile
 
     doc/Makefile
     doc/api/Makefile
     doc/rtd/Makefile
 
     dcs/Makefile
+    dcs/dcs-$API_VERSION.pc
 
     po/Makefile.in
 

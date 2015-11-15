@@ -1,8 +1,9 @@
+SUBDIRS = automake
+
 EXTRA_DIST = \
 	Makefile.am.enums \
 	Makefile.am.gresources \
 	Makefile.am.marshal \
-	appstream-xml.m4 \
 	ax_append_compile_flags.m4 \
 	ax_append_flag.m4 \
 	ax_check_compile_flag.m4 \
@@ -17,7 +18,6 @@ GITIGNOREFILES = \
 	glib-2.0.m4 \
 	glib-gettext.m4 \
 	gsettings.m4 \
-	gtk-doc.m4 \
 	intltool.m4 \
 	libtool.m4 \
 	ltoptions.m4 \

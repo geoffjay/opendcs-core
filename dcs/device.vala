@@ -18,7 +18,7 @@ public enum DCS.DeviceCapabilities {
     DIAGNOSTICS,
 }
 
-public class DCS.Device : DCS.Object {
+public class DCS.Device : GLib.Object {
 
     public DeviceCapabilities capabilities { get; construct set; }
 

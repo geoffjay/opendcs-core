@@ -55,8 +55,8 @@ public class DCS.DeviceInformation : GLib.Object {
                                                 module,
                                                 Module.SUFFIX));
             if (!module_file.query_exists ()) {
-                throw new FileError.EXIST (_("Device module %s does not exist"),
-                                           module_file.get_path ());
+                throw new FileError.EXIST ("Device module %s does not exist".printf (
+                                           module_file.get_path ()));
             }
         }
 

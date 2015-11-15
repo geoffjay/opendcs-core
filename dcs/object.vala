@@ -3,7 +3,7 @@ public interface DCS.Object : GLib.Object {
     /**
      * Unique hash for the object.
      */
-    public uint hash { get; set; }
+    public abstract uint hash { get; set; }
 
     /**
      * Specifies whether the objects provided are equivalent for sorting.
@@ -13,7 +13,7 @@ public interface DCS.Object : GLib.Object {
      *
      * @return  ``true`` or ``false`` depending on whether or not the hashes match
      */
-    public virtual bool equal (Dactl.Object a, Dactl.Object b) {
+    public virtual bool equal (DCS.Object a, DCS.Object b) {
         return a.hash == b.hash;
     }
 
@@ -24,7 +24,7 @@ public interface DCS.Object : GLib.Object {
      *
      * @return  ``0`` if they contain the same hash, ``1`` otherwise
      */
-    public virtual int compare (Dactl.Object a) {
+    public virtual int compare (DCS.Object a) {
         if (hash == a.hash) {
             return 0;
         } else {
