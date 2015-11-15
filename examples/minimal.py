@@ -7,9 +7,9 @@ import sys
 
 class DcsExample(object):
     def __init__(self):
-        self.dcsobject = OpenDCS.Object.new()
-        self.dcsobject.set_hash(0)
-        print >>sys.stderr, self.dcsobject.get_hash()
+        self.dcsobject = OpenDCS.Object()
+        self.dcsobject.set_property('id', 'test')
+        print("Object hash: ", self.dcsobject.get_property('hash'))
 
 if __name__ == "__main__":
     DcsExample()

@@ -1,9 +1,23 @@
-public interface DCS.Object : GLib.Object {
+public class DCS.Object : GLib.Object {
 
     /**
      * Unique hash for the object.
      */
-    public abstract uint hash { get; set; }
+    public uint hash {
+        get { return id.hash (); }
+    }
+
+    /**
+     * ID for the object.
+     */
+    public string id { get; construct set; }
+
+    /**
+     * Default construction.
+     */
+    public Object (string id) {
+        GLib.Object (id: id);
+    }
 
     /**
      * Specifies whether the objects provided are equivalent for sorting.

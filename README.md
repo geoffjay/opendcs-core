@@ -18,13 +18,17 @@ autotools manner.
 If you checked the code out from git, you will need to bootstrap the build
 system like so:
 
-  ./autogen.sh
+```
+$ ./autogen.sh
+```
 
 Then, a typical build might look like so:
 
-  ./configure --prefix=/usr
-  make
-  sudo make install
+```
+$ ./configure --prefix=/usr
+$ make
+$ sudo make install
+```
 
 ---
 

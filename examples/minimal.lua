@@ -1,10 +1,7 @@
 #!/usr/bin/env lua
 
 local lgi = require 'lgi'
-local GObject = lgi.require('GObject')
-local DCS = lgi.require('OpenDCS')
+local DCS = lgi.require('OpenDCS', '0.1')
 
--- this won't work yet, a DCS object is an interface
-local object = DCS.Object.new()
-object.hash = 0
-print object.hash
+local object = DCS.Object { id = 'test' }
+print("Object hash: " .. object:get_hash())
