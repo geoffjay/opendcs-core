@@ -1,0 +1,7 @@
+[package]
+name = "minimal"
+version = "0.1.0"
+authors = ["Geoff Johnson <geoff.jay@gmail.com>"]
+
+[dependencies]
+grust = "0.3.2"
