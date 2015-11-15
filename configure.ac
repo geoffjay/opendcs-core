@@ -297,6 +297,8 @@ AC_CONFIG_FILES([
     dcs/Makefile
     dcs/dcs-$API_VERSION.pc
 
+    examples/Makefile
+
     po/Makefile.in
 
     tests/Makefile

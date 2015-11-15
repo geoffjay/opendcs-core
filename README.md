@@ -1,4 +1,6 @@
-# OpenDCS Core - Core components to create distributed control systems
+## OpenDCS Core
+
+### Core components to create distributed control systems
 
 * Until the OpenDCS account on GitHub becomes free...
 
@@ -41,6 +43,18 @@ environment variables for the examples to work:
 $ export LD_LIBRARY_PATH=/usr/local/lib
 $ export GI_TYPELIB_PATH=/usr/local/lib/girepository-1.0/
 ```
+
+Additional dependencies for lua and perl by distribution:
+
+* Fedora
+
+ - lua-lgi
+ - perl-Glib-Object-Introspection
+
+Feel free to suggest additions for getting to work in other distributions.
+
+License
+-------
 
 OpenDCS and all it's components are licensed under the GNU Lesser General Public
 License as published by the Free Software Foundation, either version 3 of the
